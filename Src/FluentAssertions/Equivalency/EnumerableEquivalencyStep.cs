@@ -2,6 +2,7 @@ using System;
 
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using FluentAssertions.Execution;
 
 namespace FluentAssertions.Equivalency
@@ -15,7 +16,7 @@ namespace FluentAssertions.Equivalency
         {
             Type subjectType = config.GetExpectationType(context);
 
-            return subjectType == typeof(EnumerableWrapper);
+            return IsCollection(subjectType);
         }
 
         /// <summary>
@@ -62,12 +63,12 @@ namespace FluentAssertions.Equivalency
 
         private static bool IsCollection(Type type)
         {
-            return type == typeof(EnumerableWrapper);
+            return !typeof(string).IsAssignableFrom(type) && typeof(IEnumerable).IsAssignableFrom(type);
         }
 
         internal static object[] ToArray(object value)
         {
-            return ((EnumerableWrapper)value)?.Values;
+            return !(value is null) ? ((IEnumerable)value).Cast<object>().ToArray() : null;
         }
     }
 }
