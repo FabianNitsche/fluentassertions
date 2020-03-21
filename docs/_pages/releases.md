@@ -7,40 +7,16 @@ sidebar:
   nav: "sidebar"
 ---
 
-## 6.0.0
-
-**What's New**
-* Added official support for .NET Core 3.0
-* Added `WithOffset` extension method on `DateTime` for easier creation of `DateTimeOffset` objects.
-* Added `collectionOfStrings.Should().NotContainMatch()` to assert that the collection does not contain a string that matches a wildcard pattern 
-* The `Using`/`When` option on `BeEquivalentTo` will now use the conversion rules when trying to match the predicate.
-* Added `NotBeWritable` to `PropertyInfoSelectorAssertions` to be able to assert that properties are not writable.
-
+## 5.10.3
 **Fixes**
-* Reported actual value when it contained `{{{{` or `}}}}` (#1223)
-* Changed dictionary assertion `NotContainKeys` to honour the key comparer if applicable[1233](https://github.com/fluentassertions/fluentassertions/pull/1233)
+* Fixed XPath index calculation in XML comparison when child node names are repeated in repeated parent nodes - [#1273](https://github.com/fluentassertions/fluentassertions/pull/1273)
 
-**Breaking Changes**
-* Dropped support for .NET Framework 4.5, .NET Standard 1.3 and 1.6 - [#1227](https://github.com/fluentassertions/fluentassertions/pull/1227)
-* Dropped support for older test frameworks such as MSTest v1, NSpec v1 and v2, XUnit v1, Gallio and MBUnit - [#1227](https://github.com/fluentassertions/fluentassertions/pull/1227)
-* Removed `[Not]Have{Im,Ex}plictConversionOperator` (they had typos) - [#1221](https://github.com/fluentassertions/fluentassertions/pull/1221).
-  * Use the equivalent assertions without the typo "plict" instead.
-* Removed `NotBeAscendingInOrder`/`NotBeDescendingInOrder` - [#1221](https://github.com/fluentassertions/fluentassertions/pull/1221).
-  * Use `NotBeInAscendingOrder`/`NotBeInDescendingOrder` instead.
-* Removed `HasAttribute`, `HasMatchingAttribute` and `IsDecoratedWith(Type, bool)` `Type` extensions - [#1221](https://github.com/fluentassertions/fluentassertions/pull/1221).
-  * Use `IsDecoratedWith`/`IsDecoratedWithOrInherits` instead.
-* Made `EquivalencyAssertionOptionsExtentions` `internal` (and fixed a typo in the type name) - [#1221](https://github.com/fluentassertions/fluentassertions/pull/1221).
-* Removed parameterless constructors from: `CollectionAssertions`, `ReferenceTypeAssertions`, `MemberInfoAssertions`, `MethodBaseAssertions` and `MethodInfoAssertions` - [#1229](https://github.com/fluentassertions/fluentassertions/pull/1229).
-  * Use the constructors taking a `subject` instead.
-* Changed `ReferenceTypeAssertions.Subject` to be `readonly` - [#1229](https://github.com/fluentassertions/fluentassertions/pull/1229).
-  * Set the `Subject` through the constructor instead.
-* Changed `TypeAssertions.HaveAccessModifier` return type from `AndConstraint<Type> ` to `AndConstraint<TypeAssertions>` - [#1159](https://github.com/fluentassertions/fluentassertions/pull/1159).
-* Changed `TypeAssertions.NotHaveAccessModifier` return type from `AndConstraint<Type> ` to `AndConstraint<TypeAssertions>` - [#1159](https://github.com/fluentassertions/fluentassertions/pull/1159).
-
-
-## 5.10.1
+## 5.10.2
 **Fixes**
 * Added missing dependency on System.Xml - [#79](https://github.com/fluentassertions/fluentassertions/issues/79)
+
+## 5.10.1
+This version was skipped.
 
 ## 5.10.0
 
