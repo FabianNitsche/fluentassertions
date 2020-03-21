@@ -1678,6 +1678,131 @@ namespace FluentAssertions.Specs
                 "*not to be equivalent*because we want to test the behaviour with same objects*but they both reference the same object.");
         }
 
+        [Fact]
+        public void When_testing_custom_collections_containing_the_same_elements_to_be_equivalent_it_should_succeed()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 3, 1, 2);
+
+            // Act / Assert
+            collection1.Should().BeEquivalentTo(collection2);
+        }
+
+        [Fact]
+        public void When_testing_custom_collections_containing_the_same_elements_but_have_not_equal_property_to_be_equivalent_it_should_throw()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some Other String", 3, 1, 2);
+
+            // Act
+            Action assertingNonEquivalentCollections = () => collection1.Should().BeEquivalentTo(collection2);
+
+            // Assert
+            assertingNonEquivalentCollections.Should().Throw<XunitException>();
+        }
+
+        [Fact]
+        public void When_testing_custom_collections_containing_different_elements_but_have_equal_property_to_be_equivalent_it_should_throw()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 1, 2);
+
+            // Act
+            Action assertingNonEquivalentCollections = () => collection1.Should().BeEquivalentTo(collection2);
+
+            // Assert
+            assertingNonEquivalentCollections.Should().Throw<XunitException>();
+        }
+
+        [Fact]
+        public void When_testing_custom_collection_with_property_to_be_equivalent_to_a_plain_enumerable_of_same_elements_it_should_throw()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new[] { 3, 2, 1 };
+
+            // Act
+            Action assertingNonEquivalentCollections = () => collection1.Should().BeEquivalentTo(collection2);
+
+            // Assert
+            assertingNonEquivalentCollections.Should().Throw<XunitException>();
+        }
+
+        [Fact]
+        public void When_testing_a_class_with_property_to_be_equivalent_to_a_custom_collection_with_property_it_should_throw()
+        {
+            // Arrange
+            object classWithProperty = new WithProperty<string>("Some String");
+            object customCollectionWithProperty = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+
+            // Act
+            Action assertingNonEquivalentCollections = () => classWithProperty.Should().BeEquivalentTo(customCollectionWithProperty);
+
+            // Assert
+            assertingNonEquivalentCollections.Should().Throw<XunitException>();
+        }
+
+        [Fact]
+        public void When_testing_equivalent_custom_collections_not_to_be_equivalent_it_should_throw()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 3, 1, 2);
+
+            // Act
+            Action assertingEqualCollectionsNotToBeEquivalent = () => collection1.Should().NotBeEquivalentTo(collection2);
+
+            // Assert
+            assertingEqualCollectionsNotToBeEquivalent.Should().Throw<XunitException>();
+        }
+
+        [Fact]
+        public void When_testing_custom_collections_with_different_properties_but_equivalent_elements_not_to_be_equivalent_it_should_succeed()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some Other String", 3, 1, 2);
+
+            // Act / Assert
+            collection1.Should().NotBeEquivalentTo(collection2);
+        }
+
+        [Fact]
+        public void When_testing_custom_collections_with_equal_properties_but_different_elements_not_to_be_equivalent_it_should_succeed()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 1, 2);
+
+            // Act / Assert
+            collection1.Should().NotBeEquivalentTo(collection2);
+        }
+
+        [Fact]
+        public void When_testing_a_custom_collection_not_to_be_equivalent_to_a_plain_enumerable_with_equal_elements_it_should_succeed()
+        {
+            // Arrange
+            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            IEnumerable collection2 = new[] { 3, 1, 2 };
+
+            // Act / Assert
+            collection1.Should().NotBeEquivalentTo(collection2);
+        }
+
+        [Fact]
+        public void When_testing_a_class_with_property_not_to_be_equivalent_to_a_custom_collection_with_equal_property_it_should_succeed()
+        {
+            // Arrange
+            object classWithProperty = new WithProperty<string>("Some String");
+            object customCollectionWithProperty = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+
+            // Act / Assert
+            classWithProperty.Should().NotBeEquivalentTo(customCollectionWithProperty);
+        }
+
         #endregion
 
         #region Contain Equivalent Of
@@ -4047,6 +4172,50 @@ namespace FluentAssertions.Specs
         public object Current
         {
             get { return values[index]; }
+        }
+    }
+
+    internal class EnumerableWithPropertyA<TProperty, TElement> : IEnumerable<TElement>
+    {
+        private readonly TElement[] elements;
+
+        public TProperty Property { get; }
+
+        public EnumerableWithPropertyA(TProperty property, params TElement[] elements)
+        {
+            Property = property;
+            this.elements = elements;
+        }
+
+        public IEnumerator<TElement> GetEnumerator() => elements.OfType<TElement>().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => elements.GetEnumerator();
+    }
+
+    internal class EnumerableWithPropertyB<TProperty, TElement> : IEnumerable<TElement>
+    {
+        private readonly TElement[] elements;
+
+        public TProperty Property { get; }
+
+        public EnumerableWithPropertyB(TProperty property, params TElement[] elements)
+        {
+            Property = property;
+            this.elements = elements;
+        }
+
+        public IEnumerator<TElement> GetEnumerator() => elements.OfType<TElement>().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => elements.GetEnumerator();
+    }
+
+    internal class WithProperty<TProperty>
+    {
+        public TProperty Property { get; }
+
+        public WithProperty(TProperty property)
+        {
+            Property = property;
         }
     }
 }
