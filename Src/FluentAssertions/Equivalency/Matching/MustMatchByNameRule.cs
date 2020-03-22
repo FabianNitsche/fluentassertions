@@ -1,4 +1,4 @@
-using System.Reflection;
+using System.Linq;
 using FluentAssertions.Common;
 using FluentAssertions.Execution;
 
@@ -23,6 +23,11 @@ namespace FluentAssertions.Equivalency.Matching
             {
                 compareeSelectedMemberInfoInfo = SelectedMemberInfo.Create(subject.GetType()
                     .FindField(expectedMember.Name, expectedMember.MemberType));
+            }
+
+            if ((compareeSelectedMemberInfoInfo is null) && config.IncludeEnumerables)
+            {
+                compareeSelectedMemberInfoInfo = SelectedMemberInfo.CreateForAllEnumerables(subject.GetType()).FirstOrDefault(info => info.Name == expectedMember.Name);
             }
 
             if ((compareeSelectedMemberInfoInfo is null || !config.UseRuntimeTyping) && ExpectationImplementsMemberExplicitly(subject, expectedMember))

@@ -110,22 +110,22 @@ namespace FluentAssertions
 
         private static List<IEquivalencyStep> GetDefaultSteps()
         {
-            return new List<IEquivalencyStep>(12)
+            return new IEquivalencyStep[]
             {
                 new RunAllUserStepsEquivalencyStep(),
                 new AutoConversionStep(),
                 new ReferenceEqualityEquivalencyStep(),
-                new GenericDictionaryEquivalencyStep(),
-                new DictionaryEquivalencyStep(),
-                new MultiDimensionalArrayEquivalencyStep(),
-                new GenericEnumerableEquivalencyStep(),
-                new EnumerableEquivalencyStep(),
+                //new GenericDictionaryEquivalencyStep(),
+                //new DictionaryEquivalencyStep(),
+                //new GenericEnumerableEquivalencyStep(),
                 new StringEqualityEquivalencyStep(),
                 new EnumEqualityStep(),
+                new EnumerableEquivalencyStep(),
+                new MultiDimensionalArrayEquivalencyStep(),
                 new ValueTypeEquivalencyStep(),
                 new StructuralEqualityEquivalencyStep(),
                 new SimpleEqualityEquivalencyStep()
-            };
+            }.ToList();
         }
     }
 }
