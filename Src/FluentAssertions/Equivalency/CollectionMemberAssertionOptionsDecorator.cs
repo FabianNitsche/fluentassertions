@@ -58,6 +58,8 @@ namespace FluentAssertions.Equivalency
 
         public bool IncludeFields => inner.IncludeFields;
 
+        public bool IncludeEnumerables => inner.IncludeEnumerables;
+
         public EqualityStrategy GetEqualityStrategy(Type type)
         {
             return inner.GetEqualityStrategy(type);

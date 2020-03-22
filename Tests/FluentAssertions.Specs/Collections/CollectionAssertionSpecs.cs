@@ -1581,8 +1581,8 @@ namespace FluentAssertions.Specs
         public void When_large_collection_is_equivalent_to_another_equally_size_collection_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = Enumerable.Repeat(1, 10000);
-            IEnumerable collection2 = Enumerable.Repeat(1, 10000);
+            object collection1 = Enumerable.Repeat(1, 10000);
+            var collection2 = Enumerable.Repeat(1, 10000);
 
             // Act
             Action act = () => collection1.Should().NotBeEquivalentTo(collection2);
@@ -1595,8 +1595,8 @@ namespace FluentAssertions.Specs
         public void When_collection_is_not_equivalent_to_another_equally_sized_collection_it_should_succeed()
         {
             // Arrange
-            IEnumerable collection1 = new[] { 1, 2, 3 };
-            IEnumerable collection2 = new[] { 3, 1, 4 };
+            object collection1 = new[] { 1, 2, 3 };
+            var collection2 = new[] { 3, 1, 4 };
 
             // Act / Assert
             collection1.Should().NotBeEquivalentTo(collection2);
@@ -1606,8 +1606,8 @@ namespace FluentAssertions.Specs
         public void When_collections_are_unexpectedly_equivalent_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = new[] { 1, 2, 3 };
-            IEnumerable collection2 = new[] { 3, 1, 2 };
+            object collection1 = new[] { 1, 2, 3 };
+            var collection2 = new[] { 3, 1, 2 };
 
             // Act
             Action act = () => collection1.Should().NotBeEquivalentTo(collection2);
@@ -1621,8 +1621,8 @@ namespace FluentAssertions.Specs
         public void When_asserting_collections_not_to_be_equivalent_but_subject_collection_is_null_it_should_throw()
         {
             // Arrange
-            IEnumerable actual = null;
-            IEnumerable expectation = new[] { 1, 2, 3 };
+            object actual = null;
+            var expectation = new[] { 1, 2, 3 };
 
             // Act
             Action act = () =>
@@ -1637,8 +1637,8 @@ namespace FluentAssertions.Specs
         public void When_non_empty_collection_is_not_expected_to_be_equivalent_to_an_empty_collection_it_should_succeed()
         {
             // Arrange
-            IEnumerable collection1 = new[] { 1, 2, 3 };
-            IEnumerable collection2 = new int[0];
+            object collection1 = new[] { 1, 2, 3 };
+            var collection2 = new int[0];
 
             // Act
             Action act = () => collection1.Should().NotBeEquivalentTo(collection2);
@@ -1651,8 +1651,8 @@ namespace FluentAssertions.Specs
         public void When_testing_collections_not_to_be_equivalent_against_null_collection_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = new[] { 1, 2, 3 };
-            IEnumerable collection2 = null;
+            object collection1 = new[] { 1, 2, 3 };
+            object collection2 = null;
 
             // Act
             Action act = () => collection1.Should().NotBeEquivalentTo(collection2);
@@ -1667,8 +1667,8 @@ namespace FluentAssertions.Specs
         public void When_testing_collections_not_to_be_equivalent_against_same_collection_it_should_throw()
         {
             // Arrange
-            IEnumerable collection = new[] { 1, 2, 3 };
-            IEnumerable collection1 = collection;
+            object collection = new[] { 1, 2, 3 };
+            var collection1 = collection;
 
             // Act
             Action act = () => collection.Should().NotBeEquivalentTo(collection1,
@@ -1683,8 +1683,8 @@ namespace FluentAssertions.Specs
         public void When_testing_custom_collections_containing_the_same_elements_to_be_equivalent_it_should_succeed()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 3, 1, 2);
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new EnumerableWithPropertyB<string, int>("Some String", 3, 1, 2);
 
             // Act / Assert
             collection1.Should().BeEquivalentTo(collection2);
@@ -1694,8 +1694,8 @@ namespace FluentAssertions.Specs
         public void When_testing_custom_collections_containing_the_same_elements_but_have_not_equal_property_to_be_equivalent_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some Other String", 3, 1, 2);
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new EnumerableWithPropertyB<string, int>("Some Other String", 3, 1, 2);
 
             // Act
             Action assertingNonEquivalentCollections = () => collection1.Should().BeEquivalentTo(collection2);
@@ -1708,8 +1708,8 @@ namespace FluentAssertions.Specs
         public void When_testing_custom_collections_containing_different_elements_but_have_equal_property_to_be_equivalent_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 1, 2);
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new EnumerableWithPropertyB<string, int>("Some String", 1, 2);
 
             // Act
             Action assertingNonEquivalentCollections = () => collection1.Should().BeEquivalentTo(collection2);
@@ -1722,14 +1722,25 @@ namespace FluentAssertions.Specs
         public void When_testing_custom_collection_with_property_to_be_equivalent_to_a_plain_enumerable_of_same_elements_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new[] { 3, 2, 1 };
+            object actual = new[] { 3, 2, 1 };
+            var expectation = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
 
             // Act
-            Action assertingNonEquivalentCollections = () => collection1.Should().BeEquivalentTo(collection2);
+            Action assertingNonEquivalentCollections = () => actual.Should().BeEquivalentTo(expectation);
 
             // Assert
             assertingNonEquivalentCollections.Should().Throw<XunitException>();
+        }
+
+        [Fact]
+        public void When_testing_a_plain_enumerable_to_a_custom_collection_of_same_elements_and_a_property_to_be_equivalent_it_should_succeed()
+        {
+            // Arrange
+            object actual = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var expectation = new[] { 3, 2, 1 };
+
+            // Act / Assert
+            actual.Should().BeEquivalentTo(expectation);
         }
 
         [Fact]
@@ -1737,7 +1748,7 @@ namespace FluentAssertions.Specs
         {
             // Arrange
             object classWithProperty = new WithProperty<string>("Some String");
-            object customCollectionWithProperty = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var customCollectionWithProperty = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
 
             // Act
             Action assertingNonEquivalentCollections = () => classWithProperty.Should().BeEquivalentTo(customCollectionWithProperty);
@@ -1750,8 +1761,8 @@ namespace FluentAssertions.Specs
         public void When_testing_equivalent_custom_collections_not_to_be_equivalent_it_should_throw()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 3, 1, 2);
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new EnumerableWithPropertyB<string, int>("Some String", 3, 1, 2);
 
             // Act
             Action assertingEqualCollectionsNotToBeEquivalent = () => collection1.Should().NotBeEquivalentTo(collection2);
@@ -1764,8 +1775,8 @@ namespace FluentAssertions.Specs
         public void When_testing_custom_collections_with_different_properties_but_equivalent_elements_not_to_be_equivalent_it_should_succeed()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some Other String", 3, 1, 2);
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new EnumerableWithPropertyB<string, int>("Some Other String", 3, 1, 2);
 
             // Act / Assert
             collection1.Should().NotBeEquivalentTo(collection2);
@@ -1775,8 +1786,8 @@ namespace FluentAssertions.Specs
         public void When_testing_custom_collections_with_equal_properties_but_different_elements_not_to_be_equivalent_it_should_succeed()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new EnumerableWithPropertyB<string, int>("Some String", 1, 2);
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new EnumerableWithPropertyB<string, int>("Some String", 1, 2);
 
             // Act / Assert
             collection1.Should().NotBeEquivalentTo(collection2);
@@ -1786,8 +1797,8 @@ namespace FluentAssertions.Specs
         public void When_testing_a_custom_collection_not_to_be_equivalent_to_a_plain_enumerable_with_equal_elements_it_should_succeed()
         {
             // Arrange
-            IEnumerable collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
-            IEnumerable collection2 = new[] { 3, 1, 2 };
+            object collection1 = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var collection2 = new[] { 3, 1, 2 };
 
             // Act / Assert
             collection1.Should().NotBeEquivalentTo(collection2);
@@ -1798,7 +1809,7 @@ namespace FluentAssertions.Specs
         {
             // Arrange
             object classWithProperty = new WithProperty<string>("Some String");
-            object customCollectionWithProperty = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
+            var customCollectionWithProperty = new EnumerableWithPropertyA<string, int>("Some String", 1, 2, 3);
 
             // Act / Assert
             classWithProperty.Should().NotBeEquivalentTo(customCollectionWithProperty);

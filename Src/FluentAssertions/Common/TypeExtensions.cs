@@ -594,5 +594,21 @@ namespace FluentAssertions.Common
             bool IsParentNamespace() => IsNamespacePrefix() && type.Namespace[@namespace.Length] == '.';
             bool IsNamespacePrefix() => type.Namespace?.StartsWith(@namespace, StringComparison.Ordinal) == true;
         }
+
+        internal static string GetFriendlyName(this Type type)
+        {
+            var friendlyName = type.Name;
+            if (!type.IsGenericType)
+                return friendlyName;
+
+            var backtick = friendlyName.IndexOf('`');
+            if (backtick > 0)
+                friendlyName = friendlyName.Remove(backtick);
+
+            var genericParameters = type.GetGenericArguments().Select(GetFriendlyName);
+            friendlyName += "<" + string.Join(", ", genericParameters) + ">";
+
+            return friendlyName;
+        }
     }
 }

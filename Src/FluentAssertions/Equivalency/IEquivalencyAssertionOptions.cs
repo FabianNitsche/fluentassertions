@@ -71,6 +71,11 @@ namespace FluentAssertions.Equivalency
         bool IncludeFields { get; }
 
         /// <summary>
+        /// Gets a value indicating whether fields should be considered.
+        /// </summary>
+        bool IncludeEnumerables { get; }
+
+        /// <summary>
         /// Gets the currently configured tracer, or <c>null</c> if no tracing was configured.
         /// </summary>
         ITraceWriter TraceWriter { get; }

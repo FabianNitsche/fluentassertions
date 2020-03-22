@@ -58,6 +58,8 @@ namespace FluentAssertions.Equivalency
 
         private bool includeFields;
 
+        private bool includeEnumerables;
+
         #endregion
 
         internal SelfReferenceEquivalencyAssertionOptions()
@@ -79,6 +81,7 @@ namespace FluentAssertions.Equivalency
             useRuntimeTyping = defaults.UseRuntimeTyping;
             includeProperties = defaults.IncludeProperties;
             includeFields = defaults.IncludeFields;
+            includeEnumerables = defaults.IncludeEnumerables;
 
             ConversionSelector = defaults.ConversionSelector.Clone();
 
@@ -92,6 +95,7 @@ namespace FluentAssertions.Equivalency
 
             RemoveSelectionRule<AllPublicPropertiesSelectionRule>();
             RemoveSelectionRule<AllPublicFieldsSelectionRule>();
+            RemoveSelectionRule<AllEnumerablesSelectionRule>();
         }
 
         /// <summary>
@@ -111,6 +115,11 @@ namespace FluentAssertions.Equivalency
                 if (includeFields && !hasConflictingRules)
                 {
                     yield return new AllPublicFieldsSelectionRule();
+                }
+
+                if (includeEnumerables && !hasConflictingRules)
+                {
+                    yield return new AllEnumerablesSelectionRule();
                 }
 
                 foreach (IMemberSelectionRule rule in selectionRules)
@@ -159,6 +168,8 @@ namespace FluentAssertions.Equivalency
         bool IEquivalencyAssertionOptions.IncludeProperties => includeProperties;
 
         bool IEquivalencyAssertionOptions.IncludeFields => includeFields;
+
+        bool IEquivalencyAssertionOptions.IncludeEnumerables => includeEnumerables;
 
         EqualityStrategy IEquivalencyAssertionOptions.GetEqualityStrategy(Type type)
         {
@@ -267,6 +278,30 @@ namespace FluentAssertions.Equivalency
         public TSelf IncludingProperties()
         {
             includeProperties = true;
+            return (TSelf)this;
+        }
+
+        /// <summary>
+        /// Instructs the comparison to include all implementations of IEnumerable.
+        /// </summary>
+        /// <remarks>
+        /// This is part of the default behavior.
+        /// </remarks>
+        public TSelf IncludingEnumerables()
+        {
+            includeEnumerables = true;
+            return (TSelf)this;
+        }
+
+        /// <summary>
+        /// Instructs the comparison to exclude all implementations of IEnumerable.
+        /// </summary>
+        /// <remarks>
+        /// This is part of the default behavior.
+        /// </remarks>
+        public TSelf ExcludingEnumerables()
+        {
+            includeEnumerables = false;
             return (TSelf)this;
         }
 

@@ -94,6 +94,7 @@ namespace FluentAssertions.Equivalency
 
             IncludingFields();
             IncludingProperties();
+            IncludingEnumerables();
 
             RespectingDeclaredTypes();
         }

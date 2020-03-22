@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Linq;
 using System.Reflection;
 using FluentAssertions.Common;
 
@@ -28,6 +30,19 @@ namespace FluentAssertions.Equivalency
 
             return new FieldSelectedMemberInfo(fieldInfo);
         }
+
+        public static SelectedMemberInfo[] CreateForAllEnumerables(Type parentType)
+        {
+            var allEnumerableInterfaces = parentType.FindInterfaces(EnumerableInterfaceFilter, null).ToArray();
+            if (!allEnumerableInterfaces.Any() && typeof(IEnumerable).IsAssignableFrom(parentType))
+                allEnumerableInterfaces = new[] { parentType };
+                
+            return allEnumerableInterfaces
+                .Select(enumerableInterface => new EnumerableSelectedMemberInfo(enumerableInterface, parentType))
+                .ToArray<SelectedMemberInfo>();
+        }
+
+        private static bool EnumerableInterfaceFilter(Type type, object filterCriteria) => typeof(IEnumerable).IsAssignableFrom(type);
 
         /// <summary>
         /// Gets the name of the current member.
