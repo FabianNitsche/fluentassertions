@@ -5,13 +5,19 @@ namespace FluentAssertions.Equivalency
 {
     public class EnumerableWrapper
     {
-        private readonly IEnumerable values;
+        public object[] Values { get; }
 
-        public EnumerableWrapper(IEnumerable values)
+        public EnumerableWrapper(IEnumerator enumerator)
         {
-            this.values = values;
+            Values = Enumerate(enumerator).Cast<object>().ToArray();
         }
 
-        public object[] GetValues() => values.OfType<object>().ToArray();
+        private IEnumerable Enumerate(IEnumerator enumerator)
+        {
+            while (enumerator.MoveNext())
+            {
+                yield return enumerator.Current;
+            }
+        }
     }
 }

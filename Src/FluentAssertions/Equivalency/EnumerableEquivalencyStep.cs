@@ -67,7 +67,7 @@ namespace FluentAssertions.Equivalency
 
         internal static object[] ToArray(object value)
         {
-            return ((EnumerableWrapper)value)?.GetValues();
+            return ((EnumerableWrapper)value)?.Values;
         }
     }
 }

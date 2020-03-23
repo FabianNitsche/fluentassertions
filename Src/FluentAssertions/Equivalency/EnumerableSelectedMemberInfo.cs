@@ -7,25 +7,26 @@ using FluentAssertions.Common;
 namespace FluentAssertions.Equivalency
 {
     /// <summary>
-    /// Provides an ISelectedMemberInfo for PropertyInfo objects
+    /// Provides an ISelectedMemberInfo for Enumerable objects
     /// </summary>
     internal class EnumerableSelectedMemberInfo : SelectedMemberInfo
     {
-        private readonly Type enumerableInterface;
+
+        private readonly MethodInfo getEnumerator;
 
         public EnumerableSelectedMemberInfo(Type enumerableInterface, Type declaringType)
         {
             DeclaringType = declaringType;
-            this.enumerableInterface = enumerableInterface;
+            this.getEnumerator = enumerableInterface.GetMethod(nameof(IEnumerable.GetEnumerator));
         }
 
-        public override string Name => enumerableInterface.GetFriendlyName();
+        public override string Name => getEnumerator.DeclaringType.GetFriendlyName();
 
         public override Type MemberType => typeof(EnumerableWrapper);
 
         public override Type DeclaringType { get; }
 
-        internal override CSharpAccessModifier GetGetAccessModifier() => enumerableInterface.GetCSharpAccessModifier();
+        internal override CSharpAccessModifier GetGetAccessModifier() => getEnumerator.GetCSharpAccessModifier();
 
         internal override CSharpAccessModifier GetSetAccessModifier() => CSharpAccessModifier.InvalidForCSharp;
 
@@ -36,7 +37,9 @@ namespace FluentAssertions.Equivalency
                 throw new TargetParameterCountException("Parameter count mismatch.");
             }
 
-            return new EnumerableWrapper((IEnumerable)obj);
+            var enumerator = (IEnumerator)getEnumerator.Invoke(obj, new object[0]);
+
+            return new EnumerableWrapper(enumerator);
         }
     }
 }
