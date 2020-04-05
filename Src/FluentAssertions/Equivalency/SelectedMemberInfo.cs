@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions.Common;
@@ -43,8 +42,7 @@ namespace FluentAssertions.Equivalency
                 .ToArray<SelectedMemberInfo>();
         }
 
-        private static bool EnumerableInterfaceFilter(Type type, object filterCriteria) => type == typeof(IEnumerable)
-            || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        private static bool EnumerableInterfaceFilter(Type type, object filterCriteria) => typeof(IEnumerable).IsAssignableFrom(type);
 
         /// <summary>
         /// Gets the name of the current member.
