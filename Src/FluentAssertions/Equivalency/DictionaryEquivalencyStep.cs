@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System;
 using FluentAssertions.Execution;
 
 namespace FluentAssertions.Equivalency
@@ -12,7 +12,12 @@ namespace FluentAssertions.Equivalency
         /// </summary>
         public bool CanHandle(IEquivalencyValidationContext context, IEquivalencyAssertionOptions config)
         {
-            return typeof(IDictionary).IsAssignableFrom(config.GetExpectationType(context));
+            Type expectationType = config.GetExpectationType(context);
+
+            if (config.GetEqualityStrategy(expectationType) == EqualityStrategy.ForceMembers)
+                return false;
+
+            return typeof(IDictionary).IsAssignableFrom(expectationType);
         }
 
         /// <summary>

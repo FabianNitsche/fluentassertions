@@ -16,6 +16,9 @@ namespace FluentAssertions.Equivalency
         {
             Type subjectType = config.GetExpectationType(context);
 
+            if (config.GetEqualityStrategy(subjectType) == EqualityStrategy.ForceMembers)
+                return false;
+
             return IsCollection(subjectType);
         }
 

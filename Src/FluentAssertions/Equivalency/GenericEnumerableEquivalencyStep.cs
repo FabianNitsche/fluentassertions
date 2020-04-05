@@ -20,6 +20,9 @@ namespace FluentAssertions.Equivalency
         {
             Type expectationType = config.GetExpectationType(context);
 
+            if (config.GetEqualityStrategy(expectationType) == EqualityStrategy.ForceMembers)
+                return false;
+
             return (context.Expectation != null) && IsGenericCollection(expectationType);
         }
 
