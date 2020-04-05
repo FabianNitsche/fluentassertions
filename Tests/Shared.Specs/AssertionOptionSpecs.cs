@@ -182,14 +182,14 @@ namespace FluentAssertions.Specs
         {
             public When_inserting_a_step_before_another()
             {
-                When(() => Steps.InsertBefore<EnumerableEquivalencyStep, MyEquivalencyStep>());
+                When(() => Steps.InsertBefore<DictionaryEquivalencyStep, MyEquivalencyStep>());
             }
 
             [Fact]
             public void Then_it_should_precede_that_particular_step()
             {
                 var addedStep = Steps.LastOrDefault(s => s is MyEquivalencyStep);
-                var successor = Steps.LastOrDefault(s => s is EnumerableEquivalencyStep);
+                var successor = Steps.LastOrDefault(s => s is DictionaryEquivalencyStep);
 
                 Steps.Should().HaveElementPreceding(successor, addedStep);
             }
@@ -218,14 +218,14 @@ namespace FluentAssertions.Specs
         {
             public When_appending_a_step_after_another()
             {
-                When(() => Steps.AddAfter<EnumerableEquivalencyStep, MyEquivalencyStep>());
+                When(() => Steps.AddAfter<DictionaryEquivalencyStep, MyEquivalencyStep>());
             }
 
             [Fact]
             public void Then_it_should_precede_the_final_builtin_step()
             {
                 var addedStep = Steps.LastOrDefault(s => s is MyEquivalencyStep);
-                var predecessor = Steps.LastOrDefault(s => s is EnumerableEquivalencyStep);
+                var predecessor = Steps.LastOrDefault(s => s is DictionaryEquivalencyStep);
 
                 Steps.Should().HaveElementSucceeding(predecessor, addedStep);
             }
