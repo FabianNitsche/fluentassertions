@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using FluentAssertions.Common;
@@ -21,7 +22,7 @@ namespace FluentAssertions
 
             try
             {
-                StackTrace stack = new StackTrace(true);
+                StackTrace stack = new StackTrace(fNeedFileInfo: true);
 
                 foreach (StackFrame frame in stack.GetFrames())
                 {
@@ -65,7 +66,7 @@ namespace FluentAssertions
         private static bool IsDotNet(StackFrame frame)
         {
             var frameNamespace = frame.GetMethod().DeclaringType.Namespace;
-            var comparisonType = StringComparison.InvariantCultureIgnoreCase;
+            var comparisonType = StringComparison.OrdinalIgnoreCase;
 
             return frameNamespace?.StartsWith("system.", comparisonType) == true ||
                 frameNamespace?.Equals("system", comparisonType) == true;
@@ -84,7 +85,7 @@ namespace FluentAssertions
 
                 logger(statement);
 
-                int indexOfShould = statement.IndexOf("Should", StringComparison.InvariantCulture);
+                int indexOfShould = statement.IndexOf("Should", StringComparison.Ordinal);
                 if (indexOfShould != -1)
                 {
                     string candidate = statement.Substring(0, indexOfShould - 1);
@@ -114,18 +115,16 @@ namespace FluentAssertions
 
             try
             {
-                using (StreamReader reader = new StreamReader(File.OpenRead(fileName)))
+                using StreamReader reader = new StreamReader(File.OpenRead(fileName));
+                string line;
+                int currentLine = 1;
+
+                while ((line = reader.ReadLine()) != null && currentLine < expectedLineNumber)
                 {
-                    string line;
-                    int currentLine = 1;
-
-                    while ((line = reader.ReadLine()) != null && currentLine < expectedLineNumber)
-                    {
-                        currentLine++;
-                    }
-
-                    return (currentLine == expectedLineNumber) ? line : null;
+                    currentLine++;
                 }
+
+                return (currentLine == expectedLineNumber) ? line : null;
             }
             catch
             {
@@ -146,13 +145,13 @@ namespace FluentAssertions
 
         private static bool IsNumeric(string candidate)
         {
-            return double.TryParse(candidate, out _);
+            const NumberStyles DefaultStyle = NumberStyles.Float | NumberStyles.AllowThousands;
+            return double.TryParse(candidate, DefaultStyle, CultureInfo.InvariantCulture, out _);
         }
 
         private static bool IsBooleanLiteral(string candidate)
         {
             return candidate == "true" || candidate == "false";
         }
-
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Reflection;
 
 using FluentAssertions.Common;
 using FluentAssertions.Execution;
@@ -33,7 +32,7 @@ namespace FluentAssertions.Primitives
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<TAssertions> BeNull(string because = "", params object[] becauseArgs)
         {
@@ -54,7 +53,7 @@ namespace FluentAssertions.Primitives
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<TAssertions> NotBeNull(string because = "", params object[] becauseArgs)
         {
@@ -122,7 +121,7 @@ namespace FluentAssertions.Primitives
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndWhichConstraint<TAssertions, T> BeOfType<T>(string because = "", params object[] becauseArgs)
         {
@@ -146,10 +145,12 @@ namespace FluentAssertions.Primitives
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<TAssertions> BeOfType(Type expectedType, string because = "", params object[] becauseArgs)
         {
+            Guard.ThrowIfArgumentIsNull(expectedType, nameof(expectedType));
+
             Execute.Assertion
                 .ForCondition(!ReferenceEquals(Subject, null))
                 .BecauseOf(because, becauseArgs)
@@ -157,7 +158,7 @@ namespace FluentAssertions.Primitives
                 .FailWith("Expected {context} to be {0}{reason}, but found <null>.", expectedType);
 
             Type subjectType = Subject.GetType();
-            if (expectedType.GetTypeInfo().IsGenericTypeDefinition && subjectType.GetTypeInfo().IsGenericType)
+            if (expectedType.IsGenericTypeDefinition && subjectType.IsGenericType)
             {
                 subjectType.GetGenericTypeDefinition().Should().Be(expectedType, because, becauseArgs);
             }
@@ -178,7 +179,7 @@ namespace FluentAssertions.Primitives
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<TAssertions> NotBeOfType<T>(string because = "", params object[] becauseArgs)
         {
@@ -198,10 +199,12 @@ namespace FluentAssertions.Primitives
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<TAssertions> NotBeOfType(Type unexpectedType, string because = "", params object[] becauseArgs)
         {
+            Guard.ThrowIfArgumentIsNull(unexpectedType, nameof(unexpectedType));
+
             Execute.Assertion
                 .ForCondition(!ReferenceEquals(Subject, null))
                 .BecauseOf(because, becauseArgs)
@@ -209,7 +212,7 @@ namespace FluentAssertions.Primitives
                 .FailWith("Expected {context} not to be {0}{reason}, but found <null>.", unexpectedType);
 
             Type subjectType = Subject.GetType();
-            if (unexpectedType.GetTypeInfo().IsGenericTypeDefinition && subjectType.GetTypeInfo().IsGenericType)
+            if (unexpectedType.IsGenericTypeDefinition && subjectType.IsGenericType)
             {
                 subjectType.GetGenericTypeDefinition().Should().NotBe(unexpectedType, because, becauseArgs);
             }
@@ -254,6 +257,8 @@ namespace FluentAssertions.Primitives
         /// <returns>An <see cref="AndConstraint{TAssertions}"/> which can be used to chain assertions.</returns>
         public AndConstraint<TAssertions> BeAssignableTo(Type type, string because = "", params object[] becauseArgs)
         {
+            Guard.ThrowIfArgumentIsNull(type, nameof(type));
+
             Execute.Assertion
                 .ForCondition(!ReferenceEquals(Subject, null))
                 .BecauseOf(because, becauseArgs)
@@ -261,7 +266,7 @@ namespace FluentAssertions.Primitives
                 .FailWith("Expected {context} to be assignable to {0}{reason}, but found <null>.", type);
 
             bool isAssignable;
-            if (type.GetTypeInfo().IsGenericTypeDefinition)
+            if (type.IsGenericTypeDefinition)
             {
                 isAssignable = Subject.GetType().IsAssignableToOpenGeneric(type);
             }
@@ -302,6 +307,8 @@ namespace FluentAssertions.Primitives
         /// <returns>An <see cref="AndConstraint{TAssertions}"/> which can be used to chain assertions.</returns>
         public AndConstraint<TAssertions> NotBeAssignableTo(Type type, string because = "", params object[] becauseArgs)
         {
+            Guard.ThrowIfArgumentIsNull(type, nameof(type));
+
             Execute.Assertion
                 .ForCondition(!ReferenceEquals(Subject, null))
                 .BecauseOf(because, becauseArgs)
@@ -309,7 +316,7 @@ namespace FluentAssertions.Primitives
                 .FailWith("Expected {context} to not be assignable to {0}{reason}, but found <null>.", type);
 
             bool isAssignable;
-            if (type.GetTypeInfo().IsGenericTypeDefinition)
+            if (type.IsGenericTypeDefinition)
             {
                 isAssignable = Subject.GetType().IsAssignableToOpenGeneric(type);
             }

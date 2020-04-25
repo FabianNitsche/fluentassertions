@@ -27,7 +27,7 @@ namespace FluentAssertions.Xml
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="reasonArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<TAssertions> BeEquivalentTo(XmlNode expected, string because = "", params object[] reasonArgs)
         {
@@ -35,7 +35,7 @@ namespace FluentAssertions.Xml
             using (XmlNodeReader expectedReader = new XmlNodeReader(expected))
             {
                 var xmlReaderValidator = new XmlReaderValidator(subjectReader, expectedReader, because, reasonArgs);
-                xmlReaderValidator.Validate(true);
+                xmlReaderValidator.Validate(shouldBeEquivalent: true);
             }
 
             return new AndConstraint<TAssertions>((TAssertions)(this));
@@ -51,7 +51,7 @@ namespace FluentAssertions.Xml
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="reasonArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         /// <returns></returns>
         public AndConstraint<TAssertions> NotBeEquivalentTo(XmlNode unexpected, string because = "", params object[] reasonArgs)
@@ -60,7 +60,7 @@ namespace FluentAssertions.Xml
             using (XmlNodeReader unexpectedReader = new XmlNodeReader(unexpected))
             {
                 var xmlReaderValidator = new XmlReaderValidator(subjectReader, unexpectedReader, because, reasonArgs);
-                xmlReaderValidator.Validate(false);
+                xmlReaderValidator.Validate(shouldBeEquivalent: false);
             }
 
             return new AndConstraint<TAssertions>((TAssertions)this);

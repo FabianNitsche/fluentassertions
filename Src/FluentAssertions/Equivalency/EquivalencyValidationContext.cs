@@ -2,6 +2,9 @@ using System;
 
 namespace FluentAssertions.Equivalency
 {
+    /// <summary>
+    /// Provides information on a particular property during an assertion for structural equality of two object graphs.
+    /// </summary>
     public class EquivalencyValidationContext : IEquivalencyValidationContext
     {
         private Type compileTimeType;
@@ -19,12 +22,12 @@ namespace FluentAssertions.Equivalency
         public string SelectedMemberDescription { get; set; }
 
         /// <summary>
-        /// Gets the value of the <see cref="IMemberInfo.SelectedMemberInfo" />
+        /// Gets the value of the subject object graph.
         /// </summary>
         public object Subject { get; set; }
 
         /// <summary>
-        /// Gets the value of the <see cref="IEquivalencyValidationContext.MatchingExpectationProperty" />.
+        /// Gets the value of the expected object graph..
         /// </summary>
         public object Expectation { get; set; }
 
@@ -48,8 +51,8 @@ namespace FluentAssertions.Equivalency
             {
                 // SMELL: That prefix should be obtained from some kind of constant
                 return (SelectedMemberDescription.Length == 0) ||
-                       (RootIsCollection && SelectedMemberDescription.StartsWith("item[") &&
-                        !SelectedMemberDescription.Contains("."));
+                       (RootIsCollection && SelectedMemberDescription.StartsWith("item[", StringComparison.Ordinal) &&
+                        !SelectedMemberDescription.Contains(".", StringComparison.Ordinal));
             }
         }
 

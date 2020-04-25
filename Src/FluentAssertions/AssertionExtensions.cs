@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions.Collections;
 using FluentAssertions.Common;
+#if !NETSTANDARD2_0
 using FluentAssertions.Events;
+#endif
 using FluentAssertions.Numeric;
 using FluentAssertions.Primitives;
 using FluentAssertions.Reflection;
@@ -67,10 +69,9 @@ namespace FluentAssertions
             return () => action(subject);
         }
 
-
         /// <summary>
         /// Invokes the specified action on a subject so that you can chain it
-        /// with any of the assertions from <see cref="AsyncFunctionAssertions"/>
+        /// with any of the assertions from <see cref="NonGenericAsyncFunctionAssertions"/>
         /// </summary>
         [Pure]
         public static Func<Task> Awaiting<T>(this T subject, Func<T, ValueTask> action)
@@ -78,10 +79,9 @@ namespace FluentAssertions
             return () => action(subject).AsTask();
         }
 
-
         /// <summary>
         /// Invokes the specified action on a subject so that you can chain it
-        /// with any of the assertions from <see cref="AsyncFunctionAssertions"/>
+        /// with any of the assertions from <see cref="GenericAsyncFunctionAssertions{TResult}"/>
         /// </summary>
         [Pure]
         public static Func<Task<TResult>> Awaiting<T, TResult>(this T subject, Func<T, ValueTask<TResult>> action)
@@ -131,7 +131,7 @@ namespace FluentAssertions
 
         /// <summary>
         /// Returns an <see cref="ExecutionTimeAssertions"/> object that can be used to assert the
-        /// current <see cref="ExecutionTime"/>.
+        /// current <see cref="FluentAssertions.Specialized.ExecutionTime"/>.
         /// </summary>
         [Pure]
         public static ExecutionTimeAssertions Should(this ExecutionTime executionTime)
@@ -288,13 +288,34 @@ namespace FluentAssertions
         }
 
         /// <summary>
-        /// Returns an <see cref="GenericDictionaryAssertions{TKey, TValue}"/> object that can be used to assert the
+        /// Returns an <see cref="GenericDictionaryAssertions{TCollection, TKey, TValue}"/> object that can be used to assert the
         /// current <see cref="IDictionary{TKey, TValue}"/>.
         /// </summary>
         [Pure]
-        public static GenericDictionaryAssertions<TKey, TValue> Should<TKey, TValue>(this IDictionary<TKey, TValue> actualValue)
+        public static GenericDictionaryAssertions<IDictionary<TKey, TValue>, TKey, TValue> Should<TKey, TValue>(this IDictionary<TKey, TValue> actualValue)
         {
-            return new GenericDictionaryAssertions<TKey, TValue>(actualValue);
+            return new GenericDictionaryAssertions<IDictionary<TKey, TValue>, TKey, TValue>(actualValue);
+        }
+
+        /// <summary>
+        /// Returns an <see cref="GenericDictionaryAssertions{TCollection, TKey, TValue}"/> object that can be used to assert the
+        /// current <see cref="IEnumerable{T}"/> of <see cref="KeyValuePair{TKey, TValue}"/>.
+        /// </summary>
+        [Pure]
+        public static GenericDictionaryAssertions<IEnumerable<KeyValuePair<TKey, TValue>>, TKey, TValue> Should<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> actualValue)
+        {
+            return new GenericDictionaryAssertions<IEnumerable<KeyValuePair<TKey, TValue>>, TKey, TValue>(actualValue);
+        }
+
+        /// <summary>
+        /// Returns an <see cref="GenericDictionaryAssertions{TCollection, TKey, TValue}"/> object that can be used to assert the
+        /// current <typeparamref name="TCollection"/>.
+        /// </summary>
+        [Pure]
+        public static GenericDictionaryAssertions<TCollection, TKey, TValue> Should<TCollection, TKey, TValue>(this TCollection actualValue)
+            where TCollection : IEnumerable<KeyValuePair<TKey, TValue>>
+        {
+            return new GenericDictionaryAssertions<TCollection, TKey, TValue>(actualValue);
         }
 
         /// <summary>
@@ -711,6 +732,16 @@ namespace FluentAssertions
             return new FunctionAssertions<T>(func, extractor);
         }
 
+        /// <summary>
+        /// Returns a <see cref="TaskCompletionSourceAssertions{T}"/> object that can be used to assert the
+        /// current <see cref="TaskCompletionSource{T}"/>.
+        /// </summary>
+        [Pure]
+        public static TaskCompletionSourceAssertions<T> Should<T>(this TaskCompletionSource<T> tcs)
+        {
+            return new TaskCompletionSourceAssertions<T>(tcs);
+        }
+
 #if !NETSTANDARD2_0
 
         /// <summary>
@@ -743,17 +774,18 @@ namespace FluentAssertions
         }
 
         /// <summary>
-        /// Asserts that the thrown exception has a message that matches <paramref name = "expectedWildcardPattern" />.
+        /// Asserts that the thrown exception has a message that matches <paramref name="expectedWildcardPattern" />.
         /// </summary>
-        /// <param name = "expectedWildcardPattern">
+        /// <param name="task">The <see cref="ExceptionAssertions{TException}"/> containing the thrown exception.</param>
+        /// <param name="expectedWildcardPattern">
         /// The wildcard pattern with which the exception message is matched, where * and ? have special meanings.
         /// </param>
-        /// <param name = "because">
+        /// <param name="because">
         /// A formatted phrase as is supported by <see cref = "string.Format(string,object[])" /> explaining why the assertion
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
-        /// <param name = "becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref = "because" />.
+        /// <param name="becauseArgs">
+        /// Zero or more objects to format using the placeholders in <paramref name="because"/>.
         /// </param>
         public static async Task<ExceptionAssertions<TException>> WithMessage<TException>(
             this Task<ExceptionAssertions<TException>> task,

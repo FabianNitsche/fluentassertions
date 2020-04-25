@@ -8,9 +8,39 @@ using FluentAssertions.Execution;
 namespace FluentAssertions.Collections
 {
     public class StringCollectionAssertions :
-        SelfReferencingCollectionAssertions<string, StringCollectionAssertions>
+        StringCollectionAssertions<IEnumerable<string>>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringCollectionAssertions"/> class.
+        /// </summary>
         public StringCollectionAssertions(IEnumerable<string> actualValue)
+            : base(actualValue)
+        {
+        }
+    }
+
+    public class StringCollectionAssertions<TCollection> :
+        StringCollectionAssertions<TCollection, StringCollectionAssertions<TCollection>>
+        where TCollection : IEnumerable<string>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringCollectionAssertions{TCollection}"/> class.
+        /// </summary>
+        public StringCollectionAssertions(TCollection actualValue)
+            : base(actualValue)
+        {
+        }
+    }
+
+    public class StringCollectionAssertions<TCollection, TAssertions> :
+        SelfReferencingCollectionAssertions<TCollection, string, TAssertions>
+        where TCollection : IEnumerable<string>
+        where TAssertions : StringCollectionAssertions<TCollection, TAssertions>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringCollectionAssertions{TCollection, TAssertions}"/> class.
+        /// </summary>
+        public StringCollectionAssertions(TCollection actualValue)
             : base(actualValue)
         {
         }
@@ -20,7 +50,7 @@ namespace FluentAssertions.Collections
         /// <paramref name="expected" />. Elements are compared using their <see cref="object.Equals(object)" />.
         /// </summary>
         /// <param name="expected">An <see cref="IEnumerable{T}"/> with the expected elements.</param>
-        public new AndConstraint<StringCollectionAssertions> Equal(params string[] expected)
+        public new AndConstraint<TAssertions> Equal(params string[] expected)
         {
             return base.Equal(expected.AsEnumerable());
         }
@@ -30,7 +60,7 @@ namespace FluentAssertions.Collections
         /// <paramref name="expected" />. Elements are compared using their <see cref="object.Equals(object)" />.
         /// </summary>
         /// <param name="expected">An <see cref="IEnumerable{T}"/> with the expected elements.</param>
-        public AndConstraint<StringCollectionAssertions> Equal(IEnumerable<string> expected)
+        public AndConstraint<TAssertions> Equal(IEnumerable<string> expected)
         {
             return base.Equal(expected);
         }
@@ -41,11 +71,11 @@ namespace FluentAssertions.Collections
         /// <remarks>
         /// The two collections are equivalent when they both contain the same strings in any order.
         /// </remarks>
-        public AndConstraint<StringCollectionAssertions> BeEquivalentTo(params string[] expectation)
+        public AndConstraint<TAssertions> BeEquivalentTo(params string[] expectation)
         {
             BeEquivalentTo(expectation, config => config);
 
-            return new AndConstraint<StringCollectionAssertions>(this);
+            return new AndConstraint<TAssertions>((TAssertions)this);
         }
 
         /// <summary>
@@ -54,18 +84,19 @@ namespace FluentAssertions.Collections
         /// <remarks>
         /// The two collections are equivalent when they both contain the same strings in any order.
         /// </remarks>
+        /// <param name="expectation">An <see cref="IEnumerable{String}"/> with the expected elements.</param>
         /// <param name="because">
         /// An optional formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the
         /// assertion is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndConstraint<StringCollectionAssertions> BeEquivalentTo(IEnumerable<string> expectation, string because = "", params object[] becauseArgs)
+        public AndConstraint<TAssertions> BeEquivalentTo(IEnumerable<string> expectation, string because = "", params object[] becauseArgs)
         {
             BeEquivalentTo(expectation, config => config, because, becauseArgs);
 
-            return new AndConstraint<StringCollectionAssertions>(this);
+            return new AndConstraint<TAssertions>((TAssertions)this);
         }
 
         /// <summary>
@@ -74,6 +105,7 @@ namespace FluentAssertions.Collections
         /// <remarks>
         /// The two collections are equivalent when they both contain the same strings in any order.
         /// </remarks>
+        /// <param name="expectation">An <see cref="IEnumerable{String}"/> with the expected elements.</param>
         /// <param name="config">
         /// A reference to the <see cref="EquivalencyAssertionOptions{String}"/> configuration object that can be used
         /// to influence the way the object graphs are compared. You can also provide an alternative instance of the
@@ -85,9 +117,9 @@ namespace FluentAssertions.Collections
         /// assertion is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndConstraint<StringCollectionAssertions> BeEquivalentTo(IEnumerable<string> expectation,
+        public AndConstraint<TAssertions> BeEquivalentTo(IEnumerable<string> expectation,
             Func<EquivalencyAssertionOptions<string>, EquivalencyAssertionOptions<string>> config, string because = "",
             params object[] becauseArgs)
         {
@@ -109,7 +141,7 @@ namespace FluentAssertions.Collections
             var equivalencyValidator = new EquivalencyValidator(options);
             equivalencyValidator.AssertEquality(context);
 
-            return new AndConstraint<StringCollectionAssertions>(this);
+            return new AndConstraint<TAssertions>((TAssertions)this);
         }
 
         /// <summary>
@@ -117,7 +149,7 @@ namespace FluentAssertions.Collections
         /// using their <see cref="object.Equals(object)" /> implementation.
         /// </summary>
         /// <param name="expected">An <see cref="IEnumerable{T}"/> with the expected elements.</param>
-        public AndConstraint<StringCollectionAssertions> ContainInOrder(params string[] expected)
+        public AndConstraint<TAssertions> ContainInOrder(params string[] expected)
         {
             return base.ContainInOrder(expected.AsEnumerable());
         }
@@ -132,9 +164,9 @@ namespace FluentAssertions.Collections
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndConstraint<StringCollectionAssertions> ContainInOrder(IEnumerable<string> expected, string because = "",
+        public AndConstraint<TAssertions> ContainInOrder(IEnumerable<string> expected, string because = "",
             params object[] becauseArgs)
         {
             return base.ContainInOrder(expected, because, becauseArgs);
@@ -145,7 +177,7 @@ namespace FluentAssertions.Collections
         /// using their <see cref="object.Equals(object)" /> implementation.
         /// </summary>
         /// <param name="expected">An <see cref="IEnumerable{T}"/> with the expected elements.</param>
-        public AndConstraint<StringCollectionAssertions> Contain(IEnumerable<string> expected)
+        public AndConstraint<TAssertions> Contain(IEnumerable<string> expected)
         {
             return base.Contain(expected);
         }
@@ -159,10 +191,13 @@ namespace FluentAssertions.Collections
         /// A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
-        /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// <param name="becauseArg">
+        /// An object to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndConstraint<StringCollectionAssertions> Contain(IEnumerable<string> expected, string because = null,
+        /// <param name="becauseArgs">
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
+        /// </param>
+        public AndConstraint<TAssertions> Contain(IEnumerable<string> expected, string because = null,
             object becauseArg = null,
             params object[] becauseArgs)
         {
@@ -180,10 +215,13 @@ namespace FluentAssertions.Collections
         /// A formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the assertion
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
-        /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// <param name="becauseArg">
+        /// An object to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndConstraint<StringCollectionAssertions> NotContain(IEnumerable<string> unexpected, string because = null,
+        /// <param name="becauseArgs">
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
+        /// </param>
+        public AndConstraint<TAssertions> NotContain(IEnumerable<string> unexpected, string because = null,
             object becauseArg = null,
             params object[] becauseArgs)
         {
@@ -203,9 +241,9 @@ namespace FluentAssertions.Collections
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndWhichConstraint<StringCollectionAssertions, string> ContainMatch(string wildcardPattern, string because = "",
+        public AndWhichConstraint<TAssertions, string> ContainMatch(string wildcardPattern, string because = "",
             params object[] becauseArgs)
         {
             Execute.Assertion
@@ -216,30 +254,26 @@ namespace FluentAssertions.Collections
                 .ForCondition(ContainsMatch(wildcardPattern))
                 .FailWith("Expected {context:collection} {0} to contain a match of {1}{reason}.", Subject, wildcardPattern);
 
-            return new AndWhichConstraint<StringCollectionAssertions, string>(this, AllThatMatch(wildcardPattern));
+            return new AndWhichConstraint<TAssertions, string>((TAssertions)this, AllThatMatch(wildcardPattern));
         }
 
         private bool ContainsMatch(string wildcardPattern)
         {
-            using (var scope = new AssertionScope())
+            using var scope = new AssertionScope();
+            return Subject.Any(item =>
             {
-                return Subject.Any(item =>
-                {
-                    item.Should().Match(wildcardPattern);
-                    return !scope.Discard().Any();
-                });
-            }
+                item.Should().Match(wildcardPattern);
+                return !scope.Discard().Any();
+            });
         }
 
         private IEnumerable<string> AllThatMatch(string wildcardPattern)
         {
             return Subject.Where(item =>
             {
-                using (var scope = new AssertionScope())
-                {
-                    item.Should().Match(wildcardPattern);
-                    return !scope.Discard().Any();
-                }
+                using var scope = new AssertionScope();
+                item.Should().Match(wildcardPattern);
+                return !scope.Discard().Any();
             });
         }
 
@@ -254,9 +288,9 @@ namespace FluentAssertions.Collections
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
-        public AndConstraint<StringCollectionAssertions> NotContainMatch(string wildcardPattern, string because = "",
+        public AndConstraint<TAssertions> NotContainMatch(string wildcardPattern, string because = "",
             params object[] becauseArgs)
         {
             Execute.Assertion
@@ -267,21 +301,17 @@ namespace FluentAssertions.Collections
                 .ForCondition(NotContainsMatch(wildcardPattern))
                 .FailWith("Did not expect {context:collection} {0} to contain a match of {1}{reason}.", Subject, wildcardPattern);
 
-            return new AndConstraint<StringCollectionAssertions>(this);
+            return new AndConstraint<TAssertions>((TAssertions)this);
         }
 
         private bool NotContainsMatch(string wildcardPattern)
         {
-            using (var scope = new AssertionScope())
+            using var scope = new AssertionScope();
+            return Subject.All(item =>
             {
-                return Subject.All(item =>
-                {
-                    item.Should().NotMatch(wildcardPattern);
-                    return !scope.Discard().Any();
-                });
-            }
+                item.Should().NotMatch(wildcardPattern);
+                return !scope.Discard().Any();
+            });
         }
-
-        
     }
 }

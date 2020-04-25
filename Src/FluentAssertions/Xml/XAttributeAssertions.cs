@@ -27,12 +27,12 @@ namespace FluentAssertions.Xml
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<XAttributeAssertions> Be(XAttribute expected, string because = "", params object[] becauseArgs)
         {
             Execute.Assertion
-                .ForCondition(Subject.Name.Equals(expected.Name) && Subject.Value.Equals(expected.Value))
+                .ForCondition(Subject.Name == expected.Name && Subject.Value == expected.Value)
                 .BecauseOf(because, becauseArgs)
                 .FailWith("Expected XML attribute to be {0}{reason}, but found {1}.", expected, Subject);
 
@@ -49,12 +49,12 @@ namespace FluentAssertions.Xml
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<XAttributeAssertions> NotBe(XAttribute unexpected, string because = "", params object[] becauseArgs)
         {
             Execute.Assertion
-                .ForCondition(!Subject.Name.Equals(unexpected.Name) || !Subject.Value.Equals(unexpected.Value))
+                .ForCondition(!(Subject.Name == unexpected.Name && Subject.Value == unexpected.Value))
                 .BecauseOf(because, becauseArgs)
                 .FailWith("Did not expect XML attribute to be {0}{reason}.", unexpected);
 
@@ -70,7 +70,7 @@ namespace FluentAssertions.Xml
         /// is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
         /// </param>
         /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <see cref="because" />.
+        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
         /// </param>
         public AndConstraint<XAttributeAssertions> HaveValue(string expected, string because = "", params object[] becauseArgs)
         {

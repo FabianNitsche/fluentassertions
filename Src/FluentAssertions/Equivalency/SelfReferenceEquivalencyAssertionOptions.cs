@@ -365,13 +365,16 @@ namespace FluentAssertions.Equivalency
             return (TSelf)this;
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// Overrides the comparison of subject and expectation to use provided <paramref name="action"/>
+        /// when the predicate is met.
+        /// </summary>
         /// <param name="action">
         /// The assertion to execute when the predicate is met.
         /// </param>
         public Restriction<TProperty> Using<TProperty>(Action<IAssertionContext<TProperty>> action)
         {
-            return new Restriction<TProperty>((TSelf)this, ConversionSelector, action);
+            return new Restriction<TProperty>((TSelf)this, action);
         }
 
         /// <summary>
@@ -455,6 +458,27 @@ namespace FluentAssertions.Equivalency
         public TSelf Using(IEquivalencyStep equivalencyStep)
         {
             return AddEquivalencyStep(equivalencyStep);
+        }
+
+        /// <summary>
+        /// Ensures the equivalency comparison will create and use an instance of <typeparamref name="TEqualityComparer"/>
+        /// that implements <see cref="IEqualityComparer{T}"/>, any time
+        /// when a property is of type <typeparamref name="T"/>.
+        /// </summary>
+        public TSelf Using<T, TEqualityComparer>() where TEqualityComparer : IEqualityComparer<T>, new()
+        {
+            return Using(new TEqualityComparer());
+        }
+
+        /// <summary>
+        /// Ensures the equivalency comparison will use the specified implementation of <see cref="IEqualityComparer{T}"/>
+        /// any time when a property is of type <typeparamref name="T"/>.
+        /// </summary>
+        public TSelf Using<T>(IEqualityComparer<T> comparer)
+        {
+            userEquivalencySteps.Insert(0, new EqualityComparerEquivalencyStep<T>(comparer));
+
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -653,18 +677,16 @@ namespace FluentAssertions.Equivalency
         }
 
         /// <summary>
-        /// Defines additional overrides when used with <see cref="EquivalencyAssertionOptions.When" />
+        /// Defines additional overrides when used with <see cref="SelfReferenceEquivalencyAssertionOptions{T}" />
         /// </summary>
         public class Restriction<TMember>
         {
             private readonly Action<IAssertionContext<TMember>> action;
             private readonly TSelf options;
-            private readonly ConversionSelector conversionSelector;
 
-            public Restriction(TSelf options, ConversionSelector conversionSelector, Action<IAssertionContext<TMember>> action)
+            public Restriction(TSelf options, Action<IAssertionContext<TMember>> action)
             {
                 this.options = options;
-                this.conversionSelector = conversionSelector;
                 this.action = action;
             }
 
