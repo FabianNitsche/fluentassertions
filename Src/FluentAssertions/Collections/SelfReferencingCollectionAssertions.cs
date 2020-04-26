@@ -35,52 +35,6 @@ namespace FluentAssertions.Collections
         }
 
         /// <summary>
-        /// Asserts that an object is equivalent to another object.
-        /// </summary>
-        /// <remarks>
-        /// Objects are equivalent when both object graphs have equally named properties with the same value,
-        /// irrespective of the type of those objects. Two properties are also equal if one type can be converted to another and the result is equal.
-        /// The type of a collection property is ignored as long as the collection implements <see cref="IEnumerable{T}"/> and all
-        /// items in the collection are structurally equal.
-        /// </remarks>
-        /// <param name="config">
-        /// A reference to the <see cref="EquivalencyAssertionOptions"/> configuration object that can be used
-        /// to influence the way the object graphs are compared. You can also provide an alternative instance of the
-        /// <see cref="EquivalencyAssertionOptions{TSubject}"/> class. The global defaults are determined by the
-        /// <see cref="AssertionOptions"/> class.
-        /// </param>
-        /// <param name="because">
-        /// An optional formatted phrase as is supported by <see cref="string.Format(string,object[])" /> explaining why the
-        /// assertion is needed. If the phrase does not start with the word <i>because</i>, it is prepended automatically.
-        /// </param>
-        /// <param name="becauseArgs">
-        /// Zero or more objects to format using the placeholders in <paramref name="because" />.
-        /// </param>
-        public AndConstraint<TAssertions> BeEquivalentTo<TExpectation>(TExpectation expectation,
-            Func<EquivalencyAssertionOptions<T>, EquivalencyAssertionOptions<T>> config, string because = "",
-            params object[] becauseArgs)
-        {
-            Guard.ThrowIfArgumentIsNull(config, nameof(config));
-
-            EquivalencyAssertionOptions<IEnumerable<T>> options = config(AssertionOptions.CloneDefaults<T>()).AsCollection();
-
-            var context = new EquivalencyValidationContext
-                          {
-                              Subject = Subject,
-                              Expectation = expectation,
-                              CompileTimeType = typeof(TExpectation),
-                              Because = because,
-                              BecauseArgs = becauseArgs,
-                              Tracer = options.TraceWriter
-                          };
-
-            var equivalencyValidator = new EquivalencyValidator(options);
-            equivalencyValidator.AssertEquality(context);
-
-            return new AndConstraint<TAssertions>((TAssertions)this);
-        }
-
-        /// <summary>
         /// Asserts that the number of items in the collection matches the supplied <paramref name="expected" /> amount.
         /// </summary>
         /// <param name="expected">The expected number of items in the collection.</param>
