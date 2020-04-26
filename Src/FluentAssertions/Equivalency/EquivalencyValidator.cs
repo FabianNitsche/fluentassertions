@@ -100,6 +100,7 @@ namespace FluentAssertions.Equivalency
                 return false;
             }
 
+            // should not the type here be context dependent? Either runtime or compile time type?
             Type type = expectation.GetType();
 
             if (!isComplexTypeMap.TryGetValue(type, out bool isComplexType))
