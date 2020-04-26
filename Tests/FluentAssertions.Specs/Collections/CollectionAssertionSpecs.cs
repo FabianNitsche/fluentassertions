@@ -1462,7 +1462,7 @@ namespace FluentAssertions.Specs
             IEnumerable collection = new[] { 1, 2, 3 };
 
             // Act / Assert
-            collection.Should().BeEquivalentTo(3, 1, 2);
+            collection.Should().HaveEquivalentElementsTo(3, 1, 2);
         }
 
         [Fact]
@@ -1606,20 +1606,24 @@ namespace FluentAssertions.Specs
         public void When_collections_are_unexpectedly_equivalent_it_should_throw()
         {
             // Arrange
-            object collection1 = new[] { 1, 2, 3 };
+            var collection1 = new[] { 1, 2, 3 };
             var collection2 = new[] { 3, 1, 2 };
 
             // Act
-            Action act = () => collection1.Should().NotBeEquivalentTo(collection2);
+            Action act = () => collection1.Should().NotHaveEquivalentElementsTo(collection2);
 
             // Assert
             act.Should().Throw<XunitException>().WithMessage(
-                "Expected collection1 {1, 2, 3} not*equivalent*{3, 1, 2}.");
+                "Expected collection1 {1, 2, 3} not*equivalent*{3, 1, 2}*");
         }
 
         [Fact]
         public void When_asserting_collections_not_to_be_equivalent_but_subject_collection_is_null_it_should_throw()
         {
+            // this test should not pass, since it is different behavior with respect to
+            // When_subject_and_expectation_are_compared_for_non_equivalence_it_should_allow_chaining
+            // in BasicEquivalencySpecs
+
             // Arrange
             object actual = null;
             var expectation = new[] { 1, 2, 3 };

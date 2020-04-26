@@ -554,7 +554,7 @@ namespace FluentAssertions.Specs
             };
 
             // Act / Assert
-            items.Should().BeEquivalentTo(
+            items.Should().HaveEquivalentElementsTo(
                 new int[] { 42 },
                 new int[0]
             );
@@ -806,7 +806,7 @@ namespace FluentAssertions.Specs
             };
 
             // Act
-            Action act = () => result.Should().BeEquivalentTo(new[] { expected }, options => options.Including(x => x.A));
+            Action act = () => result.Should().HaveEquivalentElementsTo(new[] { expected }, options => options.Including(x => x.A));
 
             // Assert
             act.Should().NotThrow();
@@ -1162,7 +1162,7 @@ namespace FluentAssertions.Specs
             // Act
             Action action =
                 () =>
-                    subject.Should().BeEquivalentTo(expectation,
+                    subject.Should().HaveEquivalentElementsTo(expectation,
                         options => options
                             .WithStrictOrderingFor(
                                 s => s.UnorderedCollection));
@@ -1208,7 +1208,7 @@ namespace FluentAssertions.Specs
             // Act
             Action action =
                 () =>
-                    subject.Should().BeEquivalentTo(expectation,
+                    subject.Should().HaveEquivalentElementsTo(expectation,
                         options => options
                             .WithStrictOrderingFor(s => s.UnorderedCollection)
                             .WithoutStrictOrdering());
@@ -1454,7 +1454,7 @@ namespace FluentAssertions.Specs
             var subject = Enumerable.Empty<object>();
 
             // Act
-            Action act = () => subject.Should().BeEquivalentTo(null);
+            Action act = () => subject.Should().BeEquivalentTo<object>(null);
 
             // Assert
             act.Should().Throw<XunitException>().WithMessage(
@@ -1585,7 +1585,7 @@ namespace FluentAssertions.Specs
             };
 
             // Act
-            Action act = () => actualObjects.Should().BeEquivalentTo(expectedObjects, options =>
+            Action act = () => actualObjects.Should().HaveEquivalentElementsTo(expectedObjects, options =>
                 options.Including(order => order.SubObject.Property1));
 
             // Assert
@@ -1634,7 +1634,7 @@ namespace FluentAssertions.Specs
             IEnumerable<object> subject = null;
 
             // Act
-            Action act = () => subject.Should().BeEquivalentTo(null);
+            Action act = () => subject.Should().BeEquivalentTo<object>(null);
 
             // Assert
             act.Should().NotThrow();
@@ -2267,7 +2267,7 @@ namespace FluentAssertions.Specs
             var list2 = new[] { new KeyValuePair<int, int>(2, 321) };
 
             // Act
-            Action act = () => list1.Should().BeEquivalentTo(list2, config => config
+            Action act = () => list1.Should().HaveEquivalentElementsTo(list2, config => config
                 .Excluding(ctx => ctx.Key)
                 .ComparingByMembers<KeyValuePair<int, int>>());
 
@@ -2404,7 +2404,7 @@ namespace FluentAssertions.Specs
             // Act
             Action action =
                 () =>
-                    subject.Should().BeEquivalentTo(expectation,
+                    subject.Should().HaveEquivalentElementsTo(expectation,
                         options => options
                             .ExcludingMissingMembers()
                             .Excluding(c => c.Age));
