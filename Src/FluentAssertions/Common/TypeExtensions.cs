@@ -601,7 +601,7 @@ namespace FluentAssertions.Common
             if (!type.IsGenericType)
                 return friendlyName;
 
-            var backtick = friendlyName.IndexOf('`');
+            var backtick = friendlyName.IndexOf('`', StringComparison.Ordinal);
             if (backtick > 0)
                 friendlyName = friendlyName.Remove(backtick);
 
