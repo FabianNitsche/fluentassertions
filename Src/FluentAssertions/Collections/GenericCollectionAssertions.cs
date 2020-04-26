@@ -588,7 +588,7 @@ namespace FluentAssertions.Collections
             Func<EquivalencyAssertionOptions<TExpectation>, EquivalencyAssertionOptions<TExpectation>> forceStringOrderingConfig =
                 x => config(x).WithStrictOrderingFor(s => string.IsNullOrEmpty(s.SelectedMemberPath));
 
-            return BeEquivalentTo(repeatedExpectation, forceStringOrderingConfig, because, becauseArgs);
+            return HaveEquivalentElementsTo(repeatedExpectation, forceStringOrderingConfig, because, becauseArgs);
         }
     }
 }
