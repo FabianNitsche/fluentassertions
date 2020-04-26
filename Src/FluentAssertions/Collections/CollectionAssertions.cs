@@ -320,9 +320,91 @@ namespace FluentAssertions.Collections
         /// items in the collection are structurally equal.
         /// Notice that actual behavior is determined by the global defaults managed by <see cref="AssertionOptions"/>.
         /// </remarks>
-        public AndConstraint<TAssertions> BeEquivalentTo(params object[] expectations)
+        public AndConstraint<TAssertions> HaveEquivalentElementsTo<TExpectationElement>(params TExpectationElement[] expectations)
         {
-            BeEquivalentTo((IEnumerable)expectations, config => config, string.Empty);
+            return HaveEquivalentElementsTo(expectations, config => config);
+        }
+
+        /// <summary>
+        /// Asserts that a collection of objects is equivalent to another collection of objects.
+        /// </summary>
+        /// <remarks>
+        /// Objects within the collections are equivalent when both object graphs have equally named properties with the same
+        /// value, irrespective of the type of those objects. Two properties are also equal if one type can be converted to another
+        /// and the result is equal.
+        /// The type of a collection property is ignored as long as the collection implements <see cref="IEnumerable"/> and all
+        /// items in the collection are structurally equal.
+        /// Notice that actual behavior is determined by the global defaults managed by <see cref="AssertionOptions"/>.
+        /// </remarks>
+        public AndConstraint<TAssertions> HaveEquivalentElementsTo<TExpectationElement>(IEnumerable<TExpectationElement> expectations,
+            Func<EquivalencyAssertionOptions<TExpectationElement>, EquivalencyAssertionOptions<TExpectationElement>> config, string because = "",
+            params object[] becauseArgs)
+        {
+            Guard.ThrowIfArgumentIsNull(config, nameof(config));
+
+            EquivalencyAssertionOptions<TExpectationElement> options = config(AssertionOptions.CloneDefaults<TExpectationElement>());
+
+            var context = new EquivalencyValidationContext
+            {
+                Subject = Subject,
+                Expectation = expectations,
+                CompileTimeType = typeof(IEnumerable<TExpectationElement>),
+                Because = because,
+                BecauseArgs = becauseArgs,
+                Tracer = options.TraceWriter
+            };
+
+            var equivalencyValidator = new EquivalencyValidator(options);
+            equivalencyValidator.AssertEquality(context);
+
+            return new AndConstraint<TAssertions>((TAssertions)this);
+        }
+        /// <summary>
+        /// Asserts that a collection of objects is not equivalent to another collection of objects.
+        /// </summary>
+        /// <remarks>
+        /// Objects within the collections are equivalent when both object graphs have equally named properties with the same
+        /// value, irrespective of the type of those objects. Two properties are also equal if one type can be converted to another
+        /// and the result is equal.
+        /// The type of a collection property is ignored as long as the collection implements <see cref="IEnumerable"/> and all
+        /// items in the collection are structurally equal.
+        /// Notice that actual behavior is determined by the global defaults managed by <see cref="AssertionOptions"/>.
+        /// </remarks>
+        public AndConstraint<TAssertions> NotHaveEquivalentElementsTo<TExpectationElement>(IEnumerable<TExpectationElement> unexpected,
+            string because = "",
+            params object[] becauseArgs)
+        {
+            return NotHaveEquivalentElementsTo(unexpected, config => config, because, becauseArgs);
+        }
+
+        /// <summary>
+        /// Asserts that a collection of objects is not equivalent to another collection of objects.
+        /// </summary>
+        /// <remarks>
+        /// Objects within the collections are equivalent when both object graphs have equally named properties with the same
+        /// value, irrespective of the type of those objects. Two properties are also equal if one type can be converted to another
+        /// and the result is equal.
+        /// The type of a collection property is ignored as long as the collection implements <see cref="IEnumerable"/> and all
+        /// items in the collection are structurally equal.
+        /// Notice that actual behavior is determined by the global defaults managed by <see cref="AssertionOptions"/>.
+        /// </remarks>
+        public AndConstraint<TAssertions> NotHaveEquivalentElementsTo<TExpectationElement>(IEnumerable<TExpectationElement> unexpected,
+            Func<EquivalencyAssertionOptions<TExpectationElement>, EquivalencyAssertionOptions<TExpectationElement>> config, string because = "",
+            params object[] becauseArgs)
+        {
+            Guard.ThrowIfArgumentIsNull(config, nameof(config));
+
+            bool hasMismatches;
+            using (var scope = new AssertionScope())
+            {
+                Subject.Should().HaveEquivalentElementsTo(unexpected, config, because, becauseArgs);
+                hasMismatches = scope.Discard().Length > 0;
+            }
+
+            Execute.Assertion
+                .ForCondition(hasMismatches)
+                .BecauseOf(because, becauseArgs)
+                .FailWith("Expected {context:object} {0} not to be equivalent to {1}, but they are.", Subject, unexpected);
 
             return new AndConstraint<TAssertions>((TAssertions)this);
         }
@@ -572,25 +654,25 @@ namespace FluentAssertions.Collections
             return new AndConstraint<TAssertions>((TAssertions)this);
         }
 
-        private static List<T> GetMissingItems<T>(IEnumerable<T> expectedItems, IEnumerable<T> actualItems)
-        {
-            List<T> missingItems = new List<T>();
-            List<T> subject = actualItems.ToList();
+        //private static List<T> GetMissingItems<T>(IEnumerable<T> expectedItems, IEnumerable<T> actualItems)
+        //{
+        //    List<T> missingItems = new List<T>();
+        //    List<T> subject = actualItems.ToList();
 
-            foreach (T expectation in expectedItems)
-            {
-                if (subject.Contains(expectation))
-                {
-                    subject.Remove(expectation);
-                }
-                else
-                {
-                    missingItems.Add(expectation);
-                }
-            }
+        //    foreach (T expectation in expectedItems)
+        //    {
+        //        if (subject.Contains(expectation))
+        //        {
+        //            subject.Remove(expectation);
+        //        }
+        //        else
+        //        {
+        //            missingItems.Add(expectation);
+        //        }
+        //    }
 
-            return missingItems;
-        }
+        //    return missingItems;
+        //}
 
         /// <summary>
         /// Expects the current collection to contain the specified elements in any order. Elements are compared
