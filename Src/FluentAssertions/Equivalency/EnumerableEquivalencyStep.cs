@@ -10,9 +10,9 @@ namespace FluentAssertions.Equivalency
         /// </summary>
         public bool CanHandle(IEquivalencyValidationContext context, IEquivalencyAssertionOptions config)
         {
-            Type subjectType = config.GetExpectationType(context);
+            Type expectationType = config.GetExpectationType(context);
 
-            return subjectType == typeof(EnumerableWrapper);
+            return expectationType == typeof(EnumerableWrapper);
         }
 
         /// <summary>
