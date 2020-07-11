@@ -3264,7 +3264,7 @@ namespace FluentAssertions.Specs
             var actual = new List<SelfReturningEnumerable> { instance1, instance2 };
 
             // Assert
-            Action act = () => actual.Should().BeEquivalentTo(
+            Action act = () => actual.Should().HaveEquivalentElementsTo(
                 new[] { new SelfReturningEnumerable(), new SelfReturningEnumerable() },
                 "we want to test the failure {0}", "message");
 
