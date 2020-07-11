@@ -118,6 +118,7 @@ namespace FluentAssertions
                 new StringEqualityEquivalencyStep(),
                 new EnumEqualityStep(),
                 new EnumerableEquivalencyStep(),
+                new ArrayEquivalencyStep(),
                 new MultiDimensionalArrayEquivalencyStep(),
                 new ValueTypeEquivalencyStep(),
                 new StructuralEqualityEquivalencyStep(),
