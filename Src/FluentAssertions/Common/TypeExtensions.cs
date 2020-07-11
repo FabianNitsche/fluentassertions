@@ -599,11 +599,15 @@ namespace FluentAssertions.Common
         {
             var friendlyName = type.Name;
             if (!type.IsGenericType)
+            {
                 return friendlyName;
+            }
 
             var backtick = friendlyName.IndexOf('`', StringComparison.Ordinal);
             if (backtick > 0)
+            {
                 friendlyName = friendlyName.Remove(backtick);
+            }
 
             var genericParameters = type.GetGenericArguments().Select(GetFriendlyName);
             friendlyName += "<" + string.Join(", ", genericParameters) + ">";

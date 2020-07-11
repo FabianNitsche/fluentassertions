@@ -36,15 +36,17 @@ namespace FluentAssertions.Equivalency
         {
             var allEnumerableInterfaces = parentType.FindInterfaces(EnumerableInterfaceFilter, null).ToArray();
             if (!allEnumerableInterfaces.Any() && typeof(IEnumerable).IsAssignableFrom(parentType))
+            {
                 allEnumerableInterfaces = new[] { parentType };
-                
+            }
+
             return allEnumerableInterfaces
                 .Select(enumerableInterface => new EnumerableSelectedMemberInfo(enumerableInterface, parentType))
                 .ToArray<SelectedMemberInfo>();
         }
 
         private static bool EnumerableInterfaceFilter(Type type, object filterCriteria) => type == typeof(IEnumerable)
-            || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+            || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 
         /// <summary>
         /// Gets the name of the current member.

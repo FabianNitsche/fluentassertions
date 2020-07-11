@@ -12,7 +12,7 @@ namespace FluentAssertions.Equivalency
             Values = Enumerate(enumerator).Cast<object>().ToArray();
         }
 
-        private IEnumerable Enumerate(IEnumerator enumerator)
+        private static IEnumerable Enumerate(IEnumerator enumerator)
         {
             while (enumerator.MoveNext())
             {

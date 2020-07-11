@@ -359,6 +359,7 @@ namespace FluentAssertions.Collections
 
             return new AndConstraint<TAssertions>((TAssertions)this);
         }
+
         /// <summary>
         /// Asserts that a collection of objects is not equivalent to another collection of objects.
         /// </summary>
@@ -653,26 +654,6 @@ namespace FluentAssertions.Collections
 
             return new AndConstraint<TAssertions>((TAssertions)this);
         }
-
-        //private static List<T> GetMissingItems<T>(IEnumerable<T> expectedItems, IEnumerable<T> actualItems)
-        //{
-        //    List<T> missingItems = new List<T>();
-        //    List<T> subject = actualItems.ToList();
-
-        //    foreach (T expectation in expectedItems)
-        //    {
-        //        if (subject.Contains(expectation))
-        //        {
-        //            subject.Remove(expectation);
-        //        }
-        //        else
-        //        {
-        //            missingItems.Add(expectation);
-        //        }
-        //    }
-
-        //    return missingItems;
-        //}
 
         /// <summary>
         /// Expects the current collection to contain the specified elements in any order. Elements are compared

@@ -11,7 +11,6 @@ namespace FluentAssertions.Equivalency
     /// </summary>
     internal class EnumerableSelectedMemberInfo : SelectedMemberInfo
     {
-
         private readonly MethodInfo getEnumerator;
 
         public EnumerableSelectedMemberInfo(Type enumerableInterface, Type declaringType)
@@ -26,9 +25,9 @@ namespace FluentAssertions.Equivalency
 
         public override Type DeclaringType { get; }
 
-        internal override CSharpAccessModifier GetGetAccessModifier() => getEnumerator.GetCSharpAccessModifier();
+        public override CSharpAccessModifier GetGetAccessModifier() => getEnumerator.GetCSharpAccessModifier();
 
-        internal override CSharpAccessModifier GetSetAccessModifier() => CSharpAccessModifier.InvalidForCSharp;
+        public override CSharpAccessModifier GetSetAccessModifier() => CSharpAccessModifier.InvalidForCSharp;
 
         public override object GetValue(object obj, object[] index)
         {
