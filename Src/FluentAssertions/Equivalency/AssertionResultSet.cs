@@ -35,23 +35,25 @@ namespace FluentAssertions.Equivalency
                 return new string[0];
             }
 
-            KeyValuePair<object, string[]>[] bestResultSets = GetBestResultSets();
+            return set[key];
 
-            KeyValuePair<object, string[]> bestMatch = bestResultSets.FirstOrDefault(r => r.Key.Equals(key));
+            // KeyValuePair<object, string[]>[] bestResultSets = GetBestResultSets();
 
-            if ((bestMatch.Key, bestMatch.Value) == default)
-            {
-                return bestResultSets[0].Value;
-            }
+            // KeyValuePair<object, string[]> bestMatch = bestResultSets.FirstOrDefault(r => r.Key.Equals(key));
 
-            return bestMatch.Value;
+            // if ((bestMatch.Key, bestMatch.Value) == default)
+            // {
+            //     return bestResultSets[0].Value;
+            // }
+
+            // return bestMatch.Value;
         }
 
-        private KeyValuePair<object, string[]>[] GetBestResultSets()
-        {
-            int fewestFailures = set.Values.Min(r => r.Length);
-            return set.Where(r => r.Value.Length == fewestFailures).ToArray();
-        }
+        // private KeyValuePair<object, string[]>[] GetBestResultSets()
+        // {
+        //     int fewestFailures = set.Values.Min(r => r.Length);
+        //     return set.Where(r => r.Value.Length == fewestFailures).ToArray();
+        // }
 
         /// <summary>
         /// Gets a value indicating whether this collection contains a set without any failures at all.
