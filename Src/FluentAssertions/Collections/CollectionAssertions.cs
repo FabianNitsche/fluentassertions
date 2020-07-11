@@ -336,6 +336,22 @@ namespace FluentAssertions.Collections
         /// items in the collection are structurally equal.
         /// Notice that actual behavior is determined by the global defaults managed by <see cref="AssertionOptions"/>.
         /// </remarks>
+        public AndConstraint<TAssertions> HaveEquivalentElementsTo<TExpectationElement>(IEnumerable<TExpectationElement> expectations, string because, params object[] becauseArgs)
+        {
+            return HaveEquivalentElementsTo(expectations, config => config, because, becauseArgs);
+        }
+
+        /// <summary>
+        /// Asserts that a collection of objects is equivalent to another collection of objects.
+        /// </summary>
+        /// <remarks>
+        /// Objects within the collections are equivalent when both object graphs have equally named properties with the same
+        /// value, irrespective of the type of those objects. Two properties are also equal if one type can be converted to another
+        /// and the result is equal.
+        /// The type of a collection property is ignored as long as the collection implements <see cref="IEnumerable"/> and all
+        /// items in the collection are structurally equal.
+        /// Notice that actual behavior is determined by the global defaults managed by <see cref="AssertionOptions"/>.
+        /// </remarks>
         public AndConstraint<TAssertions> HaveEquivalentElementsTo<TExpectationElement>(IEnumerable<TExpectationElement> expectations,
             Func<EquivalencyAssertionOptions<TExpectationElement>, EquivalencyAssertionOptions<TExpectationElement>> config, string because = "",
             params object[] becauseArgs)
